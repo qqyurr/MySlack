@@ -2,6 +2,7 @@ import useInput from '@hooks/useInput';
 import React, { useCallback, useState } from 'react';
 import { Form, Label, Input, LinkContainer, Button, Header, Error, Success } from './styles';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const SignUp = () => {
   const [email, onChangeEmail] = useInput('');
@@ -42,7 +43,7 @@ const SignUp = () => {
         setSignUpError('');
         setSignUpSuccess(false);
         axios
-          .post('/api/users', { email, nickname, password }) // localhost 3095가 3095에게 보내는거
+          .post('http://localhost:3095/api/users', { email, nickname, password }) // localhost 3095가 3095에게 보내는거
           // 3090에서 3095로 보내면 CORS 때문에 요청이 두번 갔다. 이렇게 바꾸면 같은 도메인끼리 요청한거라서 options 요청을 안보낸것
           // 백엔드 서버도 localhost 내 서버도 localhost일때 편하게 이렇게 proxy해서 CORS 에러 피해갈수있다.
           .then((response) => {
@@ -103,7 +104,7 @@ const SignUp = () => {
       </Form>
       <LinkContainer>
         이미 회원이신가요?&nbsp;
-        <a href="/login">로그인 하러가기</a>
+        <Link to="/login">로그인 하러가기</Link>
       </LinkContainer>
     </div>
   );
