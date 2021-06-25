@@ -13,9 +13,7 @@ const LogIn = () => {
   // dedupingInterval 기본은 2초로 되어있어서 2초에 한번씩 서버에 요청 보낸다. 설정한 기간 내라면 서버에 요청을 보내지 않고 캐시에서 가져온다. 빈번하면 서버에 무리가 많이 갑니다.
   // errorRetryInterval 에러가 났을 때 retry 하는 간격
   // const { data: userData, error, revalidate } = useSWR('/api/users', fetcher);
-  const { data, error, revalidate } = useSWR('http://localhost:3095/api/users', fetcher, {
-    dedupingInterval: 1000000,
-  });
+  const { data, error, revalidate } = useSWR('http://localhost:3095/api/users', fetcher);
   const [logInError, setLogInError] = useState(false);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -32,7 +30,7 @@ const LogIn = () => {
           },
         )
         .then(() => {
-          revalidate();
+          revalidate(); // useSWR 함수가 다시 실행되고 data에 내 정보가 들어있으면 리렌더링 밑의 if(data)에서 Redirect
         })
         .catch((error) => {
           setLogInError(error.response?.data?.statusCode === 401);
@@ -41,6 +39,10 @@ const LogIn = () => {
     [email, password],
   );
 
+  if (data) {
+    //data에 내 정보가 담기면 redirect
+    return <Redirect to="/workspace/channel" />;
+  }
   // console.log(error, userData);
   // if (!error && userData) {
   //   console.log('로그인됨', userData);
