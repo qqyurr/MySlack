@@ -6,6 +6,7 @@ import useSWR from 'swr';
 // 다른 컴포넌트 안에 넣은 JSX은 children이 된다.
 const Workspace: FC = ({ children }) => {
   const { data, error, revalidate } = useSWR('http://localhost:3095/api/users', fetcher);
+  // SWR이 컴포넌트를 넘나들면서 전역 스토리지가 된다.
   const onLogout = useCallback(() => {
     axios
       .post('http://localhost:3095/api/users/logout', null, {
