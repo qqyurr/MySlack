@@ -167,11 +167,13 @@ const Workspace: VFC = () => {
         </Workspaces>
         <Channels>
           <WorkspaceName onClick={toggleWorkspaceModal}>
+            Sleact
             {/* {userData?.Workspaces.find((v) => v.url === workspace)?.name} */}
           </WorkspaceName>
           <MenuScroll>
             <Menu show={showWorkspaceModal} onCloseModal={toggleWorkspaceModal} style={{ top: 95, left: 80 }}>
               <WorkspaceModal>
+                <h2>Sleact</h2>
                 {/* <h2>{userData?.Workspaces.find((v) => v.url === workspace)?.name}</h2> */}
                 {/* <button onClick={onClickInviteWorkspace}>워크스페이스에 사용자 초대</button> */}
                 <button onClick={onClickAddChannel}>채널 만들기</button>
@@ -183,10 +185,10 @@ const Workspace: VFC = () => {
           </MenuScroll>
         </Channels>
         <Chats>
-          {/* <Switch>
+          <Switch>
             <Route path="/workspace/channel" component={Channel} />
-            <Route path="/workspace/dm" component={DirectMessage} />
-          </Switch> */}
+            {/* <Route path="/workspace/dm" component={DirectMessage} /> */}
+          </Switch>
         </Chats>
       </WorkspaceWrapper>
       <Modal show={showCreateWorkspaceModal} onCloseModal={onCloseModal}>

@@ -1,5 +1,5 @@
 import Workspace from '@layouts/Workspace';
-import React, { FC } from 'react';
+import React, { FC, Props } from 'react';
 import { Container, Header, DragOver } from './styles';
 
 const Channel: FC = () => {

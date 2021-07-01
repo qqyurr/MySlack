@@ -5,8 +5,9 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 // 페이지들 코드 스플리팅
 const LogIn = loadable(() => import('@pages/LogIn'));
 const SignUp = loadable(() => import('@pages/SignUp'));
-const Channel = loadable(() => import('@pages/Channel'));
-const DirectMessage = loadable(() => import('@pages/DirectMessage'));
+const WorkSpace = loadable(() => import('@layouts/Workspace'));
+// const Channel = loadable(() => import('@pages/Channel'));
+// const DirectMessage = loadable(() => import('@pages/DirectMessage'));
 
 const App = () => {
   return (
@@ -14,8 +15,9 @@ const App = () => {
       <Redirect exact path="/" to="/login" />
       <Route path="/login" component={LogIn} />
       <Route path="/signup" component={SignUp} />
-      <Route path="/workspace/channel" component={Channel} />
-      <Route path="/workspace/dm" component={DirectMessage} />
+      <Route path="/workspace/:workspace" component={WorkSpace} />
+      {/* <Route path="/workspace/channel" component={Channel} /> */}
+      {/* <Route path="/workspace/dm" component={DirectMessage} /> */}
     </Switch>
   );
 };
