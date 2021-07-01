@@ -1,5 +1,5 @@
 // import ChannelList from '@components/ChannelList';
-// import CreateChannelModal from '@components/CreateChannelModal';
+import CreateChannelModal from '@components/CreateChannelModal';
 // import DMList from '@components/DMList';
 // import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
 import Menu from '@components/Menu';
@@ -13,13 +13,12 @@ import { IChannel, IUser } from '@typings/db';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
 import gravatar from 'gravatar';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, VFC } from 'react';
 import { useParams } from 'react-router';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-// import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css';
 import useSWR from 'swr';
-
 import {
   AddButton,
   Channels,
@@ -38,10 +37,13 @@ import {
 } from './styles';
 // Channel의 index.tsx에서 Workspace 태그안에 있는 div 태그가 children이 된다.
 // 다른 컴포넌트 안에 넣은 JSX은 children이 된다.
-const Workspace: FC = ({ children }) => {
+// children이 필요없으니까 Workspace의 type을 FC에서 VFC로 바꿔줍니다.
+const Workspace: VFC = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
   const [newWorkspace, onChangeNewWorkspace, setNewWorkspace] = useInput('');
+  const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
+  const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
   const [newUrl, onChangeNewUrl, setNewUrl] = useInput('');
   const {
     data: userData,
@@ -54,7 +56,7 @@ const Workspace: FC = ({ children }) => {
   });
   // SWR이 컴포넌트를 넘나들면서 전역 스토리지가 된다.
 
-  const onLogout = useCallback(() => {
+  const onLogOut = useCallback(() => {
     axios
       .post('http://localhost:3095/api/users/logout', null, {
         withCredentials: true, // 쿠키 서로 공유하려면 세번째 자리에 withCredentials 필수
@@ -114,6 +116,15 @@ const Workspace: FC = ({ children }) => {
 
   const onCloseModal = useCallback(() => {
     setShowCreateWorkspaceModal(false);
+    setShowCreateChannelModal(false);
+  }, []);
+
+  const toggleWorkspaceModal = useCallback(() => {
+    setShowWorkspaceModal((prev) => !prev);
+  }, []);
+
+  const onClickAddChannel = useCallback(() => {
+    setShowCreateChannelModal(true);
   }, []);
 
   if (!userData) {
@@ -123,14 +134,13 @@ const Workspace: FC = ({ children }) => {
   return (
     <div>
       <Header>
-        <RightMenu>
-          <span onClick={onClickUserProfile}>
-            <ProfileImg
-              src={gravatar.url(userData.email, { s: '28px', d: 'retro' })}
-              alt={userData.nickname}
-            ></ProfileImg>
+        {userData && (
+          <RightMenu>
+            <span onClick={onClickUserProfile}>
+              <ProfileImg src={gravatar.url(userData.email, { s: '28px', d: 'retro' })} alt={userData.nickname} />
+            </span>
             {showUserMenu && (
-              <Menu style={{ right: 0, top: 38 }} show={showUserMenu} onCloseModal={onCloseUserProfile}>
+              <Menu style={{ right: 0, top: 38 }} show={showUserMenu} onCloseModal={onClickUserProfile}>
                 <ProfileModal>
                   <img src={gravatar.url(userData.email, { s: '36px', d: 'retro' })} alt={userData.nickname} />
                   <div>
@@ -138,17 +148,17 @@ const Workspace: FC = ({ children }) => {
                     <span id="profile-active">Active</span>
                   </div>
                 </ProfileModal>
-                <LogOutButton onClick={onLogout}>로그아웃</LogOutButton>
+                <LogOutButton onClick={onLogOut}>로그아웃</LogOutButton>
               </Menu>
             )}
-          </span>
-        </RightMenu>
+          </RightMenu>
+        )}
       </Header>
       <WorkspaceWrapper>
         <Workspaces>
           {userData?.Workspaces.map((ws) => {
             return (
-              <Link key={ws.id} to={`/workspace/${123}/channel/일반`}>
+              <Link key={ws.id} to={`/workspace/${ws.url}/channel/일반`}>
                 <WorkspaceButton>{ws.name.slice(0, 1).toUpperCase()}</WorkspaceButton>
               </Link>
             );
@@ -156,10 +166,28 @@ const Workspace: FC = ({ children }) => {
           <AddButton onClick={onClickCreateWorkspace}>+</AddButton>
         </Workspaces>
         <Channels>
-          <WorkspaceName>Sleact</WorkspaceName>
-          <MenuScroll>menuscroll</MenuScroll>
+          <WorkspaceName onClick={toggleWorkspaceModal}>
+            {/* {userData?.Workspaces.find((v) => v.url === workspace)?.name} */}
+          </WorkspaceName>
+          <MenuScroll>
+            <Menu show={showWorkspaceModal} onCloseModal={toggleWorkspaceModal} style={{ top: 95, left: 80 }}>
+              <WorkspaceModal>
+                {/* <h2>{userData?.Workspaces.find((v) => v.url === workspace)?.name}</h2> */}
+                {/* <button onClick={onClickInviteWorkspace}>워크스페이스에 사용자 초대</button> */}
+                <button onClick={onClickAddChannel}>채널 만들기</button>
+                <button onClick={onLogOut}>로그아웃</button>
+              </WorkspaceModal>
+            </Menu>
+            {/* <ChannelList />
+            <DMList /> */}
+          </MenuScroll>
         </Channels>
-        <Chats>{children}</Chats>
+        <Chats>
+          {/* <Switch>
+            <Route path="/workspace/channel" component={Channel} />
+            <Route path="/workspace/dm" component={DirectMessage} />
+          </Switch> */}
+        </Chats>
       </WorkspaceWrapper>
       <Modal show={showCreateWorkspaceModal} onCloseModal={onCloseModal}>
         <form onSubmit={onCreateWorkspace}>
@@ -169,11 +197,17 @@ const Workspace: FC = ({ children }) => {
           </Label>
           <Label id="workspace-url-label">
             <span>워크스페이스 url</span>
-            <Input id="workspace" value={newUrl} onChange={onChangeNewUrl} />
+            <Input id="workspace-url" value={newUrl} onChange={onChangeNewUrl} />
           </Label>
           <Button type="submit">생성하기</Button>
         </form>
       </Modal>
+      <CreateChannelModal
+        show={showCreateChannelModal}
+        onCloseModal={onCloseModal}
+        setShowCreateChannelModal={setShowCreateChannelModal}
+      />
+      <ToastContainer position="bottom-center" />
     </div>
   );
 };
