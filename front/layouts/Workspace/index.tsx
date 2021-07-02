@@ -45,6 +45,7 @@ const Workspace: VFC = () => {
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
   const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
   const [newUrl, onChangeNewUrl, setNewUrl] = useInput('');
+  const { workspace } = useParams<{ workspace: string }>();
   const {
     data: userData,
     error,
@@ -55,6 +56,13 @@ const Workspace: VFC = () => {
     // dedupingInterval 기간 안에는 아무리 요청을 많이해도 서버로 요청가지 않고 첫번쨰 요청했을 때 들어온 response를 사용한다.
   });
   // SWR이 컴포넌트를 넘나들면서 전역 스토리지가 된다.
+
+  // login안해서 userData가 없으면 null
+  // 내가 로그인했을 때만 요청할 수 있게 (SWR은 조건부 요청을 지원합니다. )
+  const { data: channelData } = useSWR<IChannel[]>(
+    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
+    fetcher,
+  );
 
   const onLogOut = useCallback(() => {
     axios
@@ -180,14 +188,18 @@ const Workspace: VFC = () => {
                 <button onClick={onLogOut}>로그아웃</button>
               </WorkspaceModal>
             </Menu>
+            {/* 데이터가 없을 수도 있는 경우에는 ? 를 붙여주면 좋다.  */}
+            {channelData?.map((v) => (
+              <div>{v.name}</div>
+            ))}
             {/* <ChannelList />
             <DMList /> */}
           </MenuScroll>
         </Channels>
         <Chats>
           <Switch>
-            <Route path="/workspace/channel" component={Channel} />
-            {/* <Route path="/workspace/dm" component={DirectMessage} /> */}
+            <Route path="/workspace/:workspace/channel/:channel" component={Channel} />
+            <Route path="/workspace/:workspace/dm/:id" component={DirectMessage} />
           </Switch>
         </Chats>
       </WorkspaceWrapper>

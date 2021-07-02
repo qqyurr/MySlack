@@ -15,12 +15,14 @@ interface Props {
   setShowCreateChannelModal: (flag: boolean) => void;
 }
 const CreateChannelModal: FC<Props> = ({ show, onCloseModal, setShowCreateChannelModal }) => {
-  const params = useParams<{ workspace?: string }>();
-  const { workspace } = params;
+  //useParams : 주소의 parameter를 useParams로 가져올 수 있다. 간단하게 주소에도 상태를 저장할 수 있다는 점
+  const { workspace, channel } = useParams<{ workspace: string; channel: string }>();
+  // const params = useParams<{ workspace?: string }>();
+  // const { workspace } = params;
   const [newChannel, onChangeNewChannel, setNewChannel] = useInput('');
-  const { data: userData } = useSWR<IUser | false>('/api/users', fetcher);
+  const { data: userData } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher);
   const { revalidate: revalidateChannel } = useSWR<IChannel[]>(
-    userData ? `/api/workspaces/${workspace}/channels` : null,
+    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
     fetcher,
   );
 
@@ -31,9 +33,13 @@ const CreateChannelModal: FC<Props> = ({ show, onCloseModal, setShowCreateChanne
         return;
       }
       axios
-        .post(`/api/workspaces/${workspace}/channels`, {
-          name: newChannel,
-        })
+        .post(
+          `http://localhost:3095/api/workspaces/${workspace}/channels`,
+          {
+            name: newChannel,
+          },
+          { withCredentials: true },
+        )
         .then(() => {
           revalidateChannel();
           setShowCreateChannelModal(false);

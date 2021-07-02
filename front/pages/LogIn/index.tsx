@@ -44,12 +44,12 @@ const LogIn = () => {
   console.log('data1', userData);
   // 로딩중
   if (userData === undefined) {
-    return <div>로딩중</div>;
+    return <div>로딩중...</div>;
   }
 
   if (userData) {
     //data에 내 정보가 담기면 redirect
-    return <Redirect to="/workspace/channel" />;
+    return <Redirect to="/workspace/sleact/channel/일반" />;
   }
   // console.log(error, userData);
   // if (!error && userData) {

@@ -74,7 +74,7 @@ const SignUp = () => {
   // 이미 내 정보가 있다면 redirect
   if (data) {
     // return은 항상 hooks 보다 아래에 있어야 합니다.
-    return <Redirect to="/workspace/channel" />;
+    return <Redirect to="/workspace/sleact/channel/일반" />;
   }
 
   return (
