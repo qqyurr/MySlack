@@ -41,6 +41,7 @@ const CreateChannelModal: FC<Props> = ({ show, onCloseModal, setShowCreateChanne
           { withCredentials: true },
         )
         .then(() => {
+          //생성하자마자 채널 리스트 다시 불러오기
           revalidateChannel();
           setShowCreateChannelModal(false);
           setNewChannel('');
