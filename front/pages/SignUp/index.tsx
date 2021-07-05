@@ -7,7 +7,7 @@ import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 
 const SignUp = () => {
-  const { data, error, revalidate } = useSWR('http://localhost:3095/api/users', fetcher);
+  const { data, error, revalidate } = useSWR('/api/users', fetcher);
 
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
@@ -47,7 +47,7 @@ const SignUp = () => {
         setSignUpError('');
         setSignUpSuccess(false);
         axios
-          .post('http://localhost:3095/api/users', { email, nickname, password }) // localhost 3095가 3095에게 보내는거
+          .post('/api/users', { email, nickname, password }) // localhost 3095가 3095에게 보내는거
           // 3090에서 3095로 보내면 CORS 때문에 요청이 두번 갔다. 이렇게 바꾸면 같은 도메인끼리 요청한거라서 options 요청을 안보낸것
           // 백엔드 서버도 localhost 내 서버도 localhost일때 편하게 이렇게 proxy해서 CORS 에러 피해갈수있다.
           .then((response) => {

@@ -82,12 +82,12 @@ const config: webpack.Configuration = {
     port: 3090,
     publicPath: '/dist/',
     //프론트에서 API로 보내는 요청은 주소를 3095로 바꿔서 보내겠다.(3095가 보낸것처럼 취급을 하겠다.)
-    // proxy: {
-    //   '/api/': {
-    //     target: 'http://localhost:3095',
-    //     changeOrigin: true,
-    //   },
-    // },
+    proxy: {
+      '/api/': {
+        target: 'http://localhost:3095',
+        changeOrigin: true,
+      },
+    },
   },
 };
 

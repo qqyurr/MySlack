@@ -55,7 +55,7 @@ const Workspace: VFC = () => {
     error,
     revalidate,
     mutate,
-  } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher, {
+  } = useSWR<IUser | false>('/api/users', fetcher, {
     dedupingInterval: 2000, //2초, 캐시의 유지기간
     // dedupingInterval 기간 안에는 아무리 요청을 많이해도 서버로 요청가지 않고 첫번쨰 요청했을 때 들어온 response를 사용한다.
   });
@@ -63,14 +63,13 @@ const Workspace: VFC = () => {
 
   // login안해서 userData가 없으면 null
   // 내가 로그인했을 때만 요청할 수 있게 (SWR은 조건부 요청을 지원합니다. )
-  const { data: channelData } = useSWR<IChannel[]>(
-    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
-    fetcher,
-  );
+  const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
+
+  const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
 
   const onLogOut = useCallback(() => {
     axios
-      .post('http://localhost:3095/api/users/logout', null, {
+      .post('/api/users/logout', null, {
         withCredentials: true, // 쿠키 서로 공유하려면 세번째 자리에 withCredentials 필수
       })
       .then(() => {
@@ -102,7 +101,7 @@ const Workspace: VFC = () => {
       if (!newUrl || !newUrl.trim()) return;
       axios
         .post(
-          'http://localhost:3095/api/workspaces',
+          '/api/workspaces',
           {
             workspace: newWorkspace,
             url: newUrl,
