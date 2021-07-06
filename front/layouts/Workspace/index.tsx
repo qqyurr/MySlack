@@ -1,9 +1,8 @@
-// import ChannelList from '@components/ChannelList';
+import ChannelList from '@components/ChannelList';
 import CreateChannelModal from '@components/CreateChannelModal';
 import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
 import InviteChannelModal from '@components/InviteChannelModal';
-// import DMList from '@components/DMList';
-// import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
+import DMList from '@components/DMList';
 import Menu from '@components/Menu';
 import Modal from '@components/Modal';
 import useInput from '@hooks/useInput';
@@ -201,8 +200,8 @@ const Workspace: VFC = () => {
             {channelData?.map((v) => (
               <div>{v.name}</div>
             ))}
-            {/* <ChannelList />
-            <DMList /> */}
+            <ChannelList />
+            <DMList />
           </MenuScroll>
         </Channels>
         <Chats>
