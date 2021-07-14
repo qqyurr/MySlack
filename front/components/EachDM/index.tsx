@@ -28,6 +28,7 @@ const EachDM: VFC<Props> = ({ member, isOnline }) => {
   }, [mutate, location.pathname, workspace, member]);
 
   return (
+    // NavLink에 activeClassName이라는게 있습니다. 지금 주소와 링크의 주소가 같으면 activeclassname 적용. selected 적용
     <NavLink key={member.id} activeClassName="selected" to={`/workspace/${workspace}/dm/${member.id}`}>
       <i
         className={`c-icon p-channel_sidebar__presence_icon p-channel_sidebar__presence_icon--dim_enabled c-presence ${

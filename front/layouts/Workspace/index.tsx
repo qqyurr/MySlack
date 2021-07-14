@@ -197,9 +197,10 @@ const Workspace: VFC = () => {
               </WorkspaceModal>
             </Menu>
             {/* 데이터가 없을 수도 있는 경우에는 ? 를 붙여주면 좋다.  */}
-            {channelData?.map((v) => (
+            {/* {channelData?.map((v) => (
               <div>{v.name}</div>
-            ))}
+            ))} */}
+            {/* swr로 userdata를 받기 때문에 따로 props로 넘겨줘야할필요 없음 */}
             <ChannelList />
             <DMList />
           </MenuScroll>
