@@ -36,7 +36,7 @@ import {
   Workspaces,
   WorkspaceWrapper,
 } from './styles';
-import { disconnect } from 'process';
+// import { disconnect } from 'process';
 // Channel의 index.tsx에서 Workspace 태그안에 있는 div 태그가 children이 된다.
 // 다른 컴포넌트 안에 넣은 JSX은 children이 된다.
 // children이 필요없으니까 Workspace의 type을 FC에서 VFC로 바꿔줍니다.
@@ -67,11 +67,11 @@ const Workspace: VFC = () => {
 
   const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
 
-  useEffect(() => {
-    return () => {
-      disconnect();
-    };
-  }, [workspace, disconnect]);
+  // useEffect(() => {
+  //   return () => {
+  //     disconnect();
+  //   };
+  // }, [workspace, disconnect]);
 
   const onLogOut = useCallback(() => {
     axios

@@ -14,7 +14,7 @@ const Channel: FC = () => {
   return (
     <Container>
       <Header>헤더</Header>
-      {/* <ChatList /> */}
+      <ChatList />
       <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm} />
     </Container>
   );

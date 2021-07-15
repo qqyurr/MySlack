@@ -1,29 +1,42 @@
-import { ChatArea, Form, MentionsTextarea, SendButton, Toolbox, EachMention } from '@components/ChatBox/styles';
-import { IUser } from '@typings/db';
+import { ChatArea, EachMention, Form, MentionsTextarea, SendButton, Toolbox } from '@components/ChatBox/styles';
+import React, { useCallback, useEffect, useRef, VFC } from 'react';
 import autosize from 'autosize';
-import gravatar from 'gravatar';
-import React, { FC, useCallback, useEffect, useRef } from 'react';
 import { Mention, SuggestionDataItem } from 'react-mentions';
+import useSWR from 'swr';
+import { IUser, IUserWithOnline } from '@typings/db';
+import fetcher from '@utils/fetcher';
+import { useParams } from 'react-router';
+import gravatar from 'gravatar';
 
 interface Props {
+  chat: string;
   onSubmitForm: (e: any) => void;
-  chat?: string;
   onChangeChat: (e: any) => void;
   placeholder?: string;
-  data?: IUser[];
 }
-const ChatBox: FC<Props> = ({ onSubmitForm, chat, onChangeChat, placeholder, data }) => {
+
+const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onChangeChat, placeholder }) => {
+  const { workspace } = useParams<{ workspace: string }>();
+  const {
+    data: userData,
+    error,
+    revalidate,
+    mutate,
+  } = useSWR<IUser | false>('/api/users', fetcher, {
+    dedupingInterval: 2000, //2초동안은 캐시된것 사용
+  });
+  const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
     if (textareaRef.current) {
       autosize(textareaRef.current);
     }
-  }, [textareaRef.current]);
+  }, []);
 
   const onKeydownChat = useCallback(
     (e) => {
       if (e.key === 'Enter') {
-        // enter를 누르면 submit 된다. shift를 누른채로 enter를 하면 submit이 안된다.
         if (!e.shiftKey) {
           e.preventDefault();
           onSubmitForm(e);
@@ -33,25 +46,26 @@ const ChatBox: FC<Props> = ({ onSubmitForm, chat, onChangeChat, placeholder, dat
     [onSubmitForm],
   );
 
-  const renderUserSuggestion: (
-    suggestion: SuggestionDataItem,
-    search: string,
-    highlightedDisplay: React.ReactNode,
-    index: number,
-    focused: boolean,
-  ) => React.ReactNode = useCallback(
-    (member, search, highlightedDisplay, index, focus) => {
-      if (!data) {
-        return null;
-      }
+  const renderSuggestion = useCallback(
+    (
+      suggestion: SuggestionDataItem,
+      search: string,
+      highlightedDisplay: React.ReactNode,
+      index: number,
+      focus: boolean,
+    ): React.ReactNode => {
+      if (!memberData) return;
       return (
         <EachMention focus={focus}>
-          <img src={gravatar.url(data[index].email, { s: '20px', d: 'retro' })} alt={data[index].nickname} />
+          <img
+            src={gravatar.url(memberData[index].email, { s: '20px', d: 'monsterid' })}
+            alt={memberData[index].nickname}
+          />
           <span>{highlightedDisplay}</span>
         </EachMention>
       );
     },
-    [data],
+    [memberData],
   );
 
   return (
@@ -69,8 +83,8 @@ const ChatBox: FC<Props> = ({ onSubmitForm, chat, onChangeChat, placeholder, dat
           <Mention
             appendSpaceOnAdd
             trigger="@"
-            data={data?.map((v) => ({ id: v.id, display: v.nickname })) || []}
-            renderSuggestion={renderUserSuggestion}
+            data={memberData?.map((v) => ({ id: v.id, display: v.nickname })) || []}
+            renderSuggestion={renderSuggestion}
           />
         </MentionsTextarea>
         <Toolbox>
