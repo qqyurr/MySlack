@@ -1,11 +1,21 @@
 import Workspace from '@layouts/Workspace';
-import React, { FC, Props } from 'react';
+import React, { FC, Props, useCallback } from 'react';
 import { Container, Header, DragOver } from './styles';
+import ChatBox from '@components/ChatBox';
+import ChatList from '@components/ChatList';
+import useInput from '@hooks/useInput';
 
 const Channel: FC = () => {
+  const [chat, onChangeChat, setChat] = useInput('');
+  const onSubmitForm = useCallback((e) => {
+    e.preventDefault();
+    setChat('');
+  }, []);
   return (
     <Container>
       <Header>헤더</Header>
+      {/* <ChatList /> */}
+      <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm} />
     </Container>
   );
 };

@@ -9,7 +9,7 @@ interface Props {
   onSubmitForm: (e: any) => void;
   chat?: string;
   onChangeChat: (e: any) => void;
-  placeholder: string;
+  placeholder?: string;
   data?: IUser[];
 }
 const ChatBox: FC<Props> = ({ onSubmitForm, chat, onChangeChat, placeholder, data }) => {
@@ -23,13 +23,14 @@ const ChatBox: FC<Props> = ({ onSubmitForm, chat, onChangeChat, placeholder, dat
   const onKeydownChat = useCallback(
     (e) => {
       if (e.key === 'Enter') {
+        // enter를 누르면 submit 된다. shift를 누른채로 enter를 하면 submit이 안된다.
         if (!e.shiftKey) {
           e.preventDefault();
           onSubmitForm(e);
         }
       }
     },
-    [chat],
+    [onSubmitForm],
   );
 
   const renderUserSuggestion: (
