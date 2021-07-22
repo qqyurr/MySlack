@@ -36,6 +36,7 @@ import {
   Workspaces,
   WorkspaceWrapper,
 } from './styles';
+import useSocket from '@hooks/useSocket';
 // import { disconnect } from 'process';
 // Channel의 index.tsx에서 Workspace 태그안에 있는 div 태그가 children이 된다.
 // 다른 컴포넌트 안에 넣은 JSX은 children이 된다.
@@ -66,12 +67,19 @@ const Workspace: VFC = () => {
   const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
 
   const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
+  const [socket, disconnect] = useSocket(workspace);
 
-  // useEffect(() => {
-  //   return () => {
-  //     disconnect();
-  //   };
-  // }, [workspace, disconnect]);
+  useEffect(() => {
+    if (channelData && userData && socket) {
+      socket.emit('login', { id: userData.id, channels: channelData.map((v) => v.id) });
+    }
+  }, [socket, channelData, userData]);
+
+  useEffect(() => {
+    return () => {
+      disconnect();
+    };
+  }, [workspace, disconnect]);
 
   const onLogOut = useCallback(() => {
     axios
@@ -88,8 +96,9 @@ const Workspace: VFC = () => {
     setShowUserMenu(false);
   }, []);
 
-  const onClickUserProfile = useCallback(() => {
+  const onClickUserProfile = useCallback((e) => {
     //toggle
+    e.stopPropagation();
     setShowUserMenu((prev) => !prev);
   }, []);
 
@@ -136,6 +145,7 @@ const Workspace: VFC = () => {
     setShowCreateChannelModal(false);
     setShowInviteWorkspaceModal(false);
     setShowInviteChannelModal(false);
+    setShowWorkspaceModal(false);
   }, []);
 
   const toggleWorkspaceModal = useCallback(() => {
