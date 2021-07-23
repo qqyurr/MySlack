@@ -28,7 +28,9 @@ const LogIn = () => {
           },
         )
         .then((response) => {
-          mutate(response.data, false); // shouldRevalidate(두번쨰 인자가 true면)Optimistic UI - 서버 요청이 성공할 거라고 예상하고 행동하는 것, 서버 요청이 실패하면 행동을 취소한다.
+          revalidate();
+          // mutate(response.data, false);
+          // shouldRevalidate(두번쨰 인자가 true면)Optimistic UI - 서버 요청이 성공할 거라고 예상하고 행동하는 것, 서버 요청이 실패하면 행동을 취소한다.
           // mutate : 이미 내가 가지고 있는 데이터로 데이터를 바꾸는거
           // revalidate(); -> 서버에 요청을 다시 보내서 정보를 가져오는거
           // useSWR 함수가 다시 실행되고 data에 내 정보가 들어있으면 리렌더링 밑의 if(data)에서 Redirect
