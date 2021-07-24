@@ -16,6 +16,9 @@ export const Form = styled.form`
   border: 1px solid rgb(29, 28, 29);
 `;
 
+// <MentionsInput><Mentions/><MentionsInput> mention의 부모는 emtionsinput이어야 한다.
+// 기존의 스타일링된 컴포넌트에 스타일 추가 가능
+// MentionsTextarea : MetionsInput에 CSS가 추가된 컴포넌트
 export const MentionsTextarea = styled(MentionsInput)`
   font-family: Slack-Lato, appleLogo, sans-serif;
   font-size: 15px;
