@@ -11,8 +11,6 @@ import axios from 'axios';
 import { IDM } from '@typings/db';
 import makeSection from '@utils/makeSection';
 import Scrollbars from 'react-custom-scrollbars';
-// import makeSection from '@utils/makeSection';
-// import Scrollbars from 'react-custom-scrollbars';
 // import useSocket from '@hooks/useSocket';
 // import { DragOver } from '@pages/DirectMessage/styles';
 const DirectMessage = () => {
@@ -45,14 +43,20 @@ const DirectMessage = () => {
           })
           .then(() => {
             revalidate(); // 채팅 받아온 다음에 채팅이 등록되게
-            setChat('');
-            // 채팅 등록된 이후 채팅창에 있던 글자 지우기
+            setChat(''); // 채팅 등록된 이후 채팅창에 있던 글자 지우기
+            scrollbarRef.current?.scrollToBottom(); // 채팅 치고 나서 제일 밑으로
           })
           .catch(console.error);
       }
     },
     [chat],
   );
+  // 로딩시 스크롤바 제일 아래로
+  useEffect(() => {
+    if (chatData?.length === 1) {
+      scrollbarRef.current?.scrollToBottom();
+    }
+  }, [chatData]);
 
   // 정보가 없다면
   if (!userData || !myData) {
